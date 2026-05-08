@@ -130,6 +130,39 @@ npm run lint     # Run ESLint to check code quality
 npm run preview  # Preview production build locally
 ```
 
+### Understanding the Build Process
+
+**`npm run dev`** - Development Mode
+- Starts a local development server
+- Hot reload (changes appear instantly)
+- Does NOT create dist/ folder
+- Only for local development
+
+**`npm run build`** - Production Build
+- Bundles and optimizes all code
+- Creates `dist/` folder with production-ready files
+- Minifies JavaScript and CSS
+- Generates `node_modules/` if not present
+- Required before deploying to production
+- This is what Render uses during deployment
+
+### Build Output
+
+After running `npm run build`, you'll see:
+```
+admin/
+├── dist/                    # Production-ready files (created by build)
+│   ├── index.html          # Main HTML file
+│   ├── assets/             # Bundled JS, CSS, images
+│   └── ...
+├── node_modules/           # Dependencies folder
+├── src/                     # Source code
+├── package.json
+└── vite.config.js
+```
+
+**Important:** The `dist/` folder is what gets deployed to production servers (like Render).
+
 ## Common Admin Setup (Recommended)
 
 If you want a complete setup right away, install:
@@ -174,6 +207,37 @@ const fetchUsers = async () => {
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/users`);
   return response.data;
 };
+```
+
+## Building for Production
+
+When you're ready to deploy the admin panel:
+
+### 1. Build the project
+```bash
+npm run build
+```
+
+This creates a `dist/` folder with optimized, production-ready files.
+
+### 2. What gets generated
+- `dist/` folder - Contains all files ready for deployment
+- `node_modules/` - All dependencies installed and ready
+- Minified and bundled JavaScript and CSS
+- Optimized images and assets
+
+### 3. Deploy the dist folder
+Upload the contents of the `dist/` folder to your hosting:
+- Render
+- Vercel
+- Netlify
+- AWS S3
+- Any web server
+
+### 4. Connecting to backend on production
+Make sure your `.env` file has the correct backend URL:
+```env
+VITE_API_URL=https://your-production-backend.com/api
 ```
 
 ## What's Next?

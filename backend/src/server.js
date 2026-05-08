@@ -4,15 +4,16 @@ import { ENV } from './config/env.js';
 import { connectDB } from './config/db.js'
 
 const app = express();
+const __dirname = path.resolve()
 
-app.get('/api/test', (res, req) => {
+app.get('/api/test', (req, res) => {
     res.status(200).json({ message: 'Server is healthy' });
 });
 if (ENV.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, "../admin/dist")));
 
     app.get("/{*any}", (req, res) => {
-        res.sendFile(path.join(_dirname, " .. /admin", "dist", "index.html"));
+        res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
     });
 }
 app.listen(ENV.PORT, async () => {
