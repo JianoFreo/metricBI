@@ -1,50 +1,36 @@
-# Step 1: Set up the folders and initialize the package.json from the root
+# Step 1: Initialize Root Project
 
 ## Overview
-This step involves creating the necessary folder structure for the `expo-ecommerce` project and initializing the root-level `package.json`.
+This step involves initializing the root-level `package.json` for the `metricBI` project.
+
+## Prerequisites
+- Ensure you are in the `metricBI/` root directory
+- Node.js and npm are installed
+- The `backend/`, `admin/`, and `application/` folders already exist
 
 ## Steps
 
-### 1. Create the project structure
-Ensure you have the following folder structure:
-```
-expo-ecommerce/
-├── backend/
-├── admin/
-└── mobile/
-```
-
-**On Windows (PowerShell):**
-```bash
-mkdir backend, admin, mobile
-```
-
-**On macOS/Linux:**
-```bash
-mkdir -p backend admin mobile
-```
-
-### 2. Initialize root package.json
-From the root directory (`expo-ecommerce`), run:
+### 1. Initialize root package.json
+From the root directory (`metricBI`), run:
 ```bash
 npm init -y
 ```
 
 This creates a root `package.json` that will manage shared scripts and dependencies across the project.
 
-### 3. Example root package.json structure
-After running `npm init -y`, your root `package.json` might look like:
+### 2. Example root package.json structure
+After running `npm init -y`, your root `package.json` should look like:
 ```json
 {
-  "name": "expo-ecommerce",
+  "name": "metricbi",
   "version": "1.0.0",
-  "description": "expo-ecommerce - A complete application with backend, admin panel, and mobile app",
+  "description": "metricBI - A complete analytics platform with backend, admin panel, and mobile application",
   "main": "index.js",
   "scripts": {
     "dev": "npm run dev --prefix backend",
     "start": "npm start --prefix backend",
     "admin": "npm run dev --prefix admin",
-    "mobile": "npm start --prefix mobile"
+    "app": "npm start --prefix application"
   },
   "dependencies": {},
   "devDependencies": {}

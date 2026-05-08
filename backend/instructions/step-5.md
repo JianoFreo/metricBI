@@ -1,7 +1,7 @@
 # Step 5: Configure Clerk Authentication
 
 ## Overview
-Clerk provides authentication for the backend, admin dashboard, and mobile app.
+Clerk provides authentication for the backend, admin dashboard, and mobile application. This step guides you through adding authentication to all three services.
 
 ## What to set up
 - Sign up for a Clerk account and create a project
@@ -38,9 +38,9 @@ cd admin
 npm install @clerk/clerk-react
 ```
 
-## Mobile setup
+## Application setup
 
-If the mobile app uses Clerk authentication, add the publishable key to `mobile/.env`:
+If the application uses Clerk authentication, add the publishable key to `application/.env`:
 
 ```env
 EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key

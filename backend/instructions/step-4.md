@@ -4,16 +4,16 @@
 This step initializes the mobile application using Expo and React Native.
 
 ## Prerequisites
-- Ensure you're in the root `expo-ecommerce/` directory
+- Ensure you're in the `application/` directory
 - Node.js and npm are installed
 - Expo Go app installed on your mobile device (available on [iOS App Store](https://apps.apple.com/us/app/expo-go/id1054059026) and [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent))
 - Completed [Step 1](step-1.md), [Step 2](step-2.md), and [Step 3](step-3.md)
 
 ## Steps
 
-### 1. Navigate to mobile folder
+### 1. Navigate to application folder
 ```bash
-cd mobile
+cd application
 ```
 
 ### 2. Create Expo project
@@ -42,7 +42,7 @@ Expo will automatically install core mobile dependencies:
 
 ## Project Structure After Setup
 ```
-mobile/
+application/
 ├── package.json
 ├── package-lock.json
 ├── app.json

@@ -3,7 +3,7 @@
 ## Overview
 Cloudinary is used for image and video uploads, storage, transformations, and CDN delivery.
 
-Since this project uploads product images from the backend, configure Cloudinary in the backend service.
+Since this project uploads media files from the backend, configure Cloudinary in the backend service.
 
 ## 1. Create Cloudinary credentials
 
