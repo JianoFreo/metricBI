@@ -8,13 +8,21 @@ The project has the following directory structure:
 
 ```text
 metricBI/
-├── backend/          # Express + MongoDB API
+├── backend/          # Node.js + Express API, all business logic, AI, database
 ├── admin/            # React + Vite admin dashboard
-├── application/      # Expo React Native application
+├── application/      # Expo React Native app, UI only + API calls
 ├── instructions/     # Step-by-step backend setup guides
 ├── README.md         # Project overview
 └── package.json      # Root package configuration
 ```
+
+## Ownership Rules
+
+- `backend/` is the single source of truth for business logic, authentication, AI, Redis, MongoDB, and all persistence.
+- `application/` must not contain database logic, model definitions, or backend business rules.
+- `application/` only consumes backend APIs and renders UI.
+- Shared domain rules belong in the backend, not duplicated in the mobile app.
+- If a feature needs data access, AI, or tenancy logic, it lives in the backend only.
 
 ## Setup Flow
 

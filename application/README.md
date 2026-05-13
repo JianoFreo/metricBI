@@ -2,6 +2,13 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## MetricBI App Boundary
+
+- This app is UI only.
+- It must not contain MongoDB, Redis, Mongoose, or business-rule logic.
+- It should only render screens and call backend APIs.
+- Tenant, auth, and AI rules are owned by `backend/`.
+
 ## Get started
 
 1. Install dependencies

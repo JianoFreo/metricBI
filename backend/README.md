@@ -1,6 +1,6 @@
 # MetricBI Backend
 
-Production-grade Node.js + Express + TypeScript backend for MetricBI - an ecommerce management and BI platform.
+Production-grade Node.js + Express + TypeScript backend for MetricBI - the single source of truth for business logic, AI, MongoDB, Redis, and tenant-scoped data access.
 
 ## 🏗️ Architecture
 
@@ -172,6 +172,13 @@ All errors follow a standardized format:
 ```
 
 ## 🔑 Key Concepts
+
+### Backend Ownership Rules
+- All business logic lives in the backend.
+- All AI integration logic lives in the backend.
+- All MongoDB and Redis access lives in the backend.
+- Every persisted record must be scoped by `companyId` for tenant isolation.
+- The mobile application only calls backend APIs and never contains database logic.
 
 ### Feature-Based Architecture
 Each feature (auth, products) contains its own:
