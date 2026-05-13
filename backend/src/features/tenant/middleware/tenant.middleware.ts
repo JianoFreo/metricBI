@@ -5,18 +5,7 @@ import {
   AuthenticationError,
   AuthorizationError,
 } from "@common/utils/errors.js";
-import { IDecodedToken, UserRole, ROLE_PERMISSIONS, IJwtPayloadMultiTenant } from "../types/tenant.types.js";
-/**
- * Extend Express Request interface for multi-tenant context
- */
-declare global {
-  namespace Express {
-    interface Request {
-      user?: IJwtPayloadMultiTenant;
-      companyId?: string;
-    }
-  }
-}
+import { UserRole, ROLE_PERMISSIONS } from "../types/tenant.types.js";
 
 
 /**
@@ -36,20 +25,19 @@ export const protectMultiTenant = (
   }
 
   try {
-    const decoded = jwt.verify(
-      token,
-      env.JWT_ACCESS_SECRET
-    ) as any;
+    const decoded = jwt.verify(token, env.JWT_ACCESS_SECRET) as any;
+
+    const userRole = decoded.role as UserRole;
 
     // Attach tenant context to request
     req.user = {
       userId: decoded.userId,
       email: decoded.email,
-      companyId: decoded.companyId,
-      role: decoded.role,
+      role: userRole as any,
+      tenantId: decoded.companyId,
       firstName: decoded.firstName,
       lastName: decoded.lastName,
-    };
+    } as any;
 
     // CRITICAL FOR TENANT ISOLATION: Always set companyId from token
     req.companyId = decoded.companyId;
@@ -78,6 +66,9 @@ export const verifyTenantAccess = (
     throw new AuthenticationError("User not authenticated");
   }
 
+  const userContext = req.user as any;
+  const authenticatedCompanyId = userContext.tenantId || userContext.companyId;
+
   // Get requested tenant from different sources (priority order)
   const requestedTenant =
     req.params.companyId ||
@@ -86,9 +77,9 @@ export const verifyTenantAccess = (
     req.query.tenantId;
 
   // If specific tenant is requested, verify user has access
-  if (requestedTenant && requestedTenant !== req.user.companyId) {
+  if (requestedTenant && requestedTenant !== authenticatedCompanyId) {
     // Only super admin can access other tenants (monitoring/support)
-    if ((req.user.role as any) !== UserRole.SUPER_ADMIN) {
+    if ((userContext.role as UserRole) !== UserRole.SUPER_ADMIN) {
       throw new AuthorizationError(
         "You do not have access to this tenant/company"
       );
@@ -96,7 +87,7 @@ export const verifyTenantAccess = (
   }
 
   // Ensure companyId is set from user's tenant
-  req.companyId = req.user.companyId;
+  req.companyId = authenticatedCompanyId;
 
   next();
 };
@@ -113,13 +104,16 @@ export const requireRole = (...allowedRoles: UserRole[]) => {
       throw new AuthenticationError("User not authenticated");
     }
 
+    const userContext = req.user as any;
+    const role = userContext.role as UserRole;
+
     // Super admin always has access
-    if ((req.user.role as any) === UserRole.SUPER_ADMIN) {
+    if (role === UserRole.SUPER_ADMIN) {
       return next();
     }
 
     // Check if user's role is in allowed roles
-    if (!allowedRoles.includes(req.user.role as any)) {
+    if (!allowedRoles.includes(role)) {
       throw new AuthorizationError(
         `This action requires one of these roles: ${allowedRoles.join(", ")}`
       );
@@ -141,13 +135,16 @@ export const requirePermission = (...requiredPermissions: string[]) => {
       throw new AuthenticationError("User not authenticated");
     }
 
+    const userContext = req.user as any;
+    const role = userContext.role as UserRole;
+
     // Super admin always has all permissions
-    if ((req.user.role as any) === UserRole.SUPER_ADMIN) {
+    if (role === UserRole.SUPER_ADMIN) {
       return next();
     }
 
     // Get role-based permissions
-    const rolePermissions = ROLE_PERMISSIONS[req.user.role as any] || [];
+    const rolePermissions = ROLE_PERMISSIONS[role] || [];
     const userPermissions = [...rolePermissions];
 
     // Check for wildcard permissions
@@ -185,8 +182,10 @@ export const ensureResourceOwnership = (
     throw new AuthenticationError("User not authenticated");
   }
 
+  const userContext = req.user as any;
+
   // For super admin, allow access (with audit logging)
-  if (req.user.role === UserRole.SUPER_ADMIN) {
+  if ((userContext.role as UserRole) === UserRole.SUPER_ADMIN) {
     return next();
   }
 
@@ -195,7 +194,7 @@ export const ensureResourceOwnership = (
     throw new AuthenticationError("Company context not found");
   }
 
-  if (req.companyId !== req.user.companyId) {
+  if (req.companyId !== (userContext.tenantId || userContext.companyId)) {
     throw new AuthorizationError(
       "You can only modify resources in your own company"
     );

@@ -42,7 +42,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
 };
 
 export interface ICompany {
-  _id: string;
+  _id: string | import("mongoose").Types.ObjectId;
   name: string;
   slug: string; // URL-friendly name for multi-tenancy
   description?: string;
@@ -54,8 +54,8 @@ export interface ICompany {
   maxDataPoints: number; // Data storage limit
   subscriptionTier: "free" | "starter" | "professional" | "enterprise";
   subscriptionStatus: "active" | "paused" | "cancelled";
-  owner: string; // User ID of company owner
-  members: string[]; // Array of user IDs
+  owner: string | import("mongoose").Types.ObjectId; // User ID of company owner
+  members: Array<string | import("mongoose").Types.ObjectId>; // Array of user IDs
   customBranding?: {
     primaryColor?: string;
     logoUrl?: string;
@@ -72,7 +72,7 @@ export interface ICompany {
 }
 
 export interface IUserMultiTenant {
-  _id: string;
+  _id: string | import("mongoose").Types.ObjectId;
   email: string;
   firstName: string;
   lastName: string;
@@ -80,7 +80,7 @@ export interface IUserMultiTenant {
   phone?: string;
   avatar?: string;
   role: UserRole; // Multi-tenant role
-  companyId: string; // Which company/tenant this user belongs to
+  companyId: string | import("mongoose").Types.ObjectId; // Which company/tenant this user belongs to
   department?: string;
   position?: string;
   permissions: string[]; // Custom permissions override
@@ -131,12 +131,9 @@ export interface IInvitationToken {
   updatedAt: Date;
 }
 
-// Multi-tenant request context
 declare global {
   namespace Express {
     interface Request {
-      tenant?: ITenantContext;
-      user?: IJwtPayloadMultiTenant;
       companyId?: string;
     }
   }

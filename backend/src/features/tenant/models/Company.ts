@@ -71,14 +71,14 @@ const CompanySchema = new Schema<ICompany & Document>(
     },
     // Multi-tenancy ownership
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: [true, "Company must have an owner"],
       index: true,
     },
     members: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "User",
         index: true,
       },

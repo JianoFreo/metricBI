@@ -120,7 +120,7 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods.comparePassword = async function (
   password: string
 ): Promise<boolean> {
-  return bcrypt.compare(password, this.password);
+  return bcrypt.compare(password, (this as any).password);
 };
 
 export const User = mongoose.model<IUserMultiTenant & Document>(
