@@ -2,6 +2,7 @@ import "dotenv/config";
 import env from "@config/env.js";
 import logger from "@config/logger.js";
 import { connectDatabase, disconnectDatabase } from "@config/database.js";
+import { connectRedis, disconnectRedis } from "@config/redis.js";
 import app from "./app.js";
 
 const PORT = env.PORT;
@@ -13,6 +14,9 @@ const startServer = async (): Promise<void> => {
     // Connect to MongoDB
     await connectDatabase();
 
+    // Connect to Redis (optional)
+    await connectRedis();
+
     // Start Express Server
     const server = app.listen(PORT, () => {
       logger.info(`✓ Server running on http://localhost:${PORT}`);
@@ -22,33 +26,36 @@ const startServer = async (): Promise<void> => {
     /**
      * Graceful Shutdown
      */
-    process.on("SIGTERM", async () => {
-      logger.info("SIGTERM received, shutting down gracefully...");
+    const shutdown = async () => {
+      logger.info("Shutting down gracefully...");
       server.close(async () => {
         await disconnectDatabase();
+        await disconnectRedis();
         logger.info("✓ Server shut down successfully");
         process.exit(0);
       });
-    });
+    };
 
-    process.on("SIGINT", async () => {
-      logger.info("SIGINT received, shutting down gracefully...");
-      server.close(async () => {
-        await disconnectDatabase();
-        logger.info("✓ Server shut down successfully");
-        process.exit(0);
-      });
-    });
+    process.on("SIGTERM", shutdown);
+    process.on("SIGINT", shutdown);
 
     /**
      * Unhandled Rejection Handler
      */
     process.on("unhandledRejection", (reason: any) => {
-      logger.error("Unhandled Rejection:", reason);
+      logger.error("✗ Unhandled Rejection:", reason);
+      process.exit(1);
+    });
+
+    /**
+     * Uncaught Exception Handler
+     */
+    process.on("uncaughtException", (error) => {
+      logger.error("✗ Uncaught Exception:", error);
       process.exit(1);
     });
   } catch (error) {
-    logger.error("Failed to start server:", error);
+    logger.error("✗ Failed to start server:", error);
     process.exit(1);
   }
 };
