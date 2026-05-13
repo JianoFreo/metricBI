@@ -114,13 +114,13 @@ export class AuthService {
    * Generate access and refresh tokens
    */
   private generateTokens(payload: JwtPayload): TokenPair {
-    const accessToken = jwt.sign(payload, env.JWT_ACCESS_SECRET, {
+    const accessToken = jwt.sign(payload, env.JWT_ACCESS_SECRET as string, {
       expiresIn: env.JWT_ACCESS_EXPIRY,
-    });
+    } as any);
 
-    const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET, {
+    const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET as string, {
       expiresIn: env.JWT_REFRESH_EXPIRY,
-    });
+    } as any);
 
     return { accessToken, refreshToken };
   }
@@ -138,7 +138,7 @@ export class AuthService {
       throw new AuthenticationError("User not found");
     }
 
-    const isPasswordValid = await user.comparePassword(oldPassword);
+    const isPasswordValid = await (user as any).comparePassword(oldPassword);
     if (!isPasswordValid) {
       throw new AuthenticationError("Current password is incorrect");
     }

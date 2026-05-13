@@ -49,13 +49,16 @@ export const sendError = (
   code?: string,
   details?: unknown
 ): Response => {
+  const error: any = {
+    message,
+    code,
+  };
+  if (details) {
+    error.details = details;
+  }
   return res.status(statusCode).json({
     success: false,
-    error: {
-      message,
-      code,
-      ...(details && { details }),
-    },
+    error,
     timestamp: new Date().toISOString(),
   } as ApiResponse<null>);
 };

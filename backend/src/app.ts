@@ -7,7 +7,6 @@ import { apiLimiter } from "@common/middleware/rateLimiter.middleware.js";
 import { sendError } from "@common/utils/response.js";
 import logger from "@config/logger.js";
 import authRoutes from "@features/auth/routes/auth.routes.js";
-import productRoutes from "@features/products/routes/product.routes.js";
 
 const app: Application = express();
 
@@ -56,7 +55,6 @@ app.get("/health", (req: Request, res: Response) => {
  * API Routes
  */
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/products", productRoutes);
 
 /**
  * API Documentation
@@ -67,7 +65,6 @@ app.get("/api/v1", (req: Request, res: Response) => {
     version: "1.0.0",
     endpoints: {
       auth: "/api/v1/auth",
-      products: "/api/v1/products",
     },
   });
 });
