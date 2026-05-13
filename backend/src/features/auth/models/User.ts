@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
-import { IUser } from "../types/auth.types.js";
+import { IUser, AuthRole } from "../types/auth.types.js";
 
 /**
  * User Schema - Stores user credentials and profile information
@@ -30,15 +30,20 @@ const UserSchema = new Schema<IUser & Document>(
       required: true,
       select: false, // Don't include password by default
     },
+    refreshTokenHash: {
+      type: String,
+      select: false,
+      default: null,
+    },
     role: {
       type: String,
-      enum: ["user", "admin", "seller"],
-      default: "user",
+      enum: ["viewer", "analyst", "manager", "admin", "super_admin"],
+      default: "viewer",
     },
-    tenantId: {
+    companyId: {
       type: String,
+      required: true,
       index: true,
-      sparse: true,
     },
     isActive: {
       type: Boolean,
@@ -50,6 +55,9 @@ const UserSchema = new Schema<IUser & Document>(
   }
 );
 
+UserSchema.index({ email: 1, companyId: 1 }, { unique: true });
+UserSchema.index({ companyId: 1, role: 1 });
+
 /**
  * Hash password before saving if it's modified
  */
@@ -58,7 +66,7 @@ UserSchema.pre("save", async function (next) {
 
   try {
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash((this as any).password, salt);
     next();
   } catch (error: any) {
     next(error);
@@ -71,7 +79,7 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods.comparePassword = async function (
   password: string
 ): Promise<boolean> {
-  return bcrypt.compare(password, this.password);
+  return bcrypt.compare(password, (this as any).password);
 };
 
 export const User = mongoose.model<IUser & Document>("User", UserSchema);

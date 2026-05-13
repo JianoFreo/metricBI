@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import env from "@config/env.js";
 import { AuthenticationError, AuthorizationError } from "@common/utils/errors.js";
-import { JwtPayload, DecodedToken } from "../types/auth.types.js";
+import { JwtPayload, DecodedToken, AuthRole } from "../types/auth.types.js";
 
 /**
  * Extend Express Request interface to include authenticated user
@@ -11,7 +11,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: JwtPayload;
-      tenantId?: string;
+      companyId?: string;
     }
   }
 }
@@ -36,10 +36,12 @@ export const protect = (
     req.user = {
       userId: decoded.userId,
       email: decoded.email,
+      companyId: decoded.companyId,
       role: decoded.role,
-      tenantId: decoded.tenantId,
+      firstName: decoded.firstName,
+      lastName: decoded.lastName,
     };
-    req.tenantId = decoded.tenantId;
+    req.companyId = decoded.companyId;
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
@@ -54,13 +56,13 @@ export const protect = (
  * @param roles Array of allowed roles
  * @returns Middleware function
  */
-export const authorize = (...roles: string[]) => {
+export const authorize = (...roles: AuthRole[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
       throw new AuthenticationError("User not authenticated");
     }
 
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user.role as AuthRole)) {
       throw new AuthorizationError(
         `This action requires one of these roles: ${roles.join(", ")}`
       );
@@ -78,15 +80,17 @@ export const verifyTenant = (
   res: Response,
   next: NextFunction
 ): void => {
-  const tenantId = req.params.tenantId || req.query.tenantId;
+  const tenantId = req.params.companyId || req.params.tenantId || req.query.companyId || req.query.tenantId;
 
-  if (!req.user?.tenantId) {
+  if (!req.user?.companyId) {
     throw new AuthenticationError("User not associated with any tenant");
   }
 
-  if (tenantId && tenantId !== req.user.tenantId && req.user.role !== "admin") {
+  if (tenantId && tenantId !== req.user.companyId && req.user.role !== "admin" && req.user.role !== "super_admin") {
     throw new AuthorizationError("Not authorized to access this tenant");
   }
 
   next();
 };
+
+export const requireRole = (...roles: AuthRole[]) => authorize(...roles);

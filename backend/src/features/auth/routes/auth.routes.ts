@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as authController from "../controllers/auth.controller.js";
 import { validate } from "@common/middleware/validation.middleware.js";
-import { protect, authorize } from "../middleware/auth.middleware.js";
+import { protect, authorize, requireRole, verifyTenant } from "../middleware/auth.middleware.js";
 import { authLimiter } from "@common/middleware/rateLimiter.middleware.js";
 import {
   registerSchema,
@@ -56,7 +56,7 @@ router.post(
  * GET /api/v1/auth/me
  * Get current user profile
  */
-router.get("/me", protect, authController.getProfile);
+router.get("/me", protect, verifyTenant, authController.getProfile);
 
 /**
  * POST /api/v1/auth/change-password
@@ -65,6 +65,7 @@ router.get("/me", protect, authController.getProfile);
 router.post(
   "/change-password",
   protect,
+  verifyTenant,
   validate(changePasswordSchema),
   authController.changePassword
 );
@@ -73,6 +74,6 @@ router.post(
  * POST /api/v1/auth/logout
  * Logout user
  */
-router.post("/logout", protect, authController.logout);
+router.post("/logout", protect, verifyTenant, authController.logout);
 
 export default router;

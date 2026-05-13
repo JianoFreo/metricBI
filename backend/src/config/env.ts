@@ -15,6 +15,11 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(32, "JWT_REFRESH_SECRET must be at least 32 characters"),
   JWT_ACCESS_EXPIRY: z.string().default("15m"),
   JWT_REFRESH_EXPIRY: z.string().default("7d"),
+
+  // Auth cookies
+  AUTH_USE_COOKIES: z.string().default("false").transform((value) => value === "true"),
+  AUTH_COOKIE_NAME: z.string().default("metricbi_refresh_token"),
+  AUTH_COOKIE_DOMAIN: z.string().optional(),
   
   // Redis
   REDIS_URL: z.string().url().optional(),

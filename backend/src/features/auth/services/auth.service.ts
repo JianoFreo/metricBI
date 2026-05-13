@@ -11,6 +11,12 @@ import { AuthenticationError, ConflictError } from "@common/utils/errors.js";
 import { authRepository } from "../repositories/auth.repository.js";
 import { RegisterInput, LoginInput } from "../schemas/auth.schemas.js";
 import logger from "@config/logger.js";
+import {
+  createTokenPair,
+  hashRefreshToken,
+  compareRefreshToken,
+  verifyToken,
+} from "../utils/token.utils.js";
 
 /**
  * Authentication Service
@@ -21,24 +27,33 @@ export class AuthService {
    * Register new user
    */
   async register(data: RegisterInput): Promise<IAuthResponse> {
-    const userExists = await authRepository.emailExists(data.email);
+    const userExists = await authRepository.emailExistsInCompany(data.email, data.companyId);
     if (userExists) {
-      throw new ConflictError(`Email ${data.email} is already registered`);
+      throw new ConflictError(`Email ${data.email} is already registered in this company`);
     }
 
     const user = await authRepository.createUser({
+      companyId: data.companyId,
       email: data.email,
       password: data.password,
       firstName: data.firstName,
       lastName: data.lastName,
-      role: "user",
+      role: data.role || "viewer",
     });
 
-    const tokens = this.generateTokens({
+    const tokens = createTokenPair({
       userId: user._id.toString(),
       email: user.email,
+      companyId: user.companyId,
       role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
     });
+
+    await authRepository.updateRefreshTokenHash(
+      user._id.toString(),
+      await hashRefreshToken(tokens.refreshToken)
+    );
 
     logger.info(`User registered: ${user.email}`);
 
@@ -55,23 +70,32 @@ export class AuthService {
    * Login user
    */
   async login(data: LoginInput): Promise<IAuthResponse> {
-    const user = await authRepository.findByEmail(data.email);
+    const user = await authRepository.findByEmail(data.email, data.companyId);
     if (!user) {
       throw new AuthenticationError("Invalid email or password");
     }
 
     const isPasswordValid = await (
-      User.findById(user._id) as any
+      User.findById(user._id).select("+password") as any
     ).comparePassword(data.password);
     if (!isPasswordValid) {
       throw new AuthenticationError("Invalid email or password");
     }
 
-    const tokens = this.generateTokens({
+    const tokens = createTokenPair({
       userId: user._id.toString(),
       email: user.email,
+      companyId: user.companyId,
       role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
     });
+
+    await authRepository.updateRefreshTokenHash(
+      user._id.toString(),
+      await hashRefreshToken(tokens.refreshToken)
+    );
+    await authRepository.updateLastLogin(user._id.toString());
 
     logger.info(`User logged in: ${user.email}`);
 
@@ -89,10 +113,10 @@ export class AuthService {
    */
   async refreshAccessToken(refreshToken: string): Promise<TokenPair> {
     try {
-      const decoded = jwt.verify(
-        refreshToken,
-        env.JWT_REFRESH_SECRET
-      ) as DecodedToken;
+      const decoded = verifyToken(refreshToken, env.JWT_REFRESH_SECRET);
+      if (!decoded) {
+        throw new AuthenticationError("Invalid or expired refresh token");
+      }
 
       // Verify user still exists
       const user = await authRepository.findById(decoded.userId);
@@ -100,29 +124,34 @@ export class AuthService {
         throw new AuthenticationError("User not found");
       }
 
-      return this.generateTokens({
+      const storedUser = await User.findById(decoded.userId).select("+refreshTokenHash");
+      if (!storedUser?.refreshTokenHash) {
+        throw new AuthenticationError("Refresh token has been revoked");
+      }
+
+      const isValidRefreshToken = await compareRefreshToken(refreshToken, storedUser.refreshTokenHash);
+      if (!isValidRefreshToken) {
+        throw new AuthenticationError("Refresh token has been revoked");
+      }
+
+      const tokens = createTokenPair({
         userId: decoded.userId,
         email: decoded.email,
+        companyId: decoded.companyId,
         role: decoded.role,
+        firstName: decoded.firstName,
+        lastName: decoded.lastName,
       });
+
+      await authRepository.updateRefreshTokenHash(
+        decoded.userId,
+        await hashRefreshToken(tokens.refreshToken)
+      );
+
+      return tokens;
     } catch (error) {
       throw new AuthenticationError("Invalid or expired refresh token");
     }
-  }
-
-  /**
-   * Generate access and refresh tokens
-   */
-  private generateTokens(payload: JwtPayload): TokenPair {
-    const accessToken = jwt.sign(payload, env.JWT_ACCESS_SECRET as string, {
-      expiresIn: env.JWT_ACCESS_EXPIRY,
-    } as any);
-
-    const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET as string, {
-      expiresIn: env.JWT_REFRESH_EXPIRY,
-    } as any);
-
-    return { accessToken, refreshToken };
   }
 
   /**
@@ -145,8 +174,13 @@ export class AuthService {
 
     user.password = newPassword;
     await user.save();
+    await authRepository.updateRefreshTokenHash(userId, null);
 
     logger.info(`Password updated for user: ${user.email}`);
+  }
+
+  async logout(userId: string): Promise<void> {
+    await authRepository.updateRefreshTokenHash(userId, null);
   }
 
   /**

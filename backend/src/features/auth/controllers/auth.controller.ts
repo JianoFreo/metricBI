@@ -3,6 +3,12 @@ import { authService } from "../services/auth.service.js";
 import { sendSuccess, sendError } from "@common/utils/response.js";
 import { asyncHandler } from "@common/utils/asyncHandler.js";
 import logger from "@config/logger.js";
+import env from "@config/env.js";
+import {
+  getRefreshTokenFromRequest,
+  setRefreshTokenCookie,
+  clearRefreshTokenCookie,
+} from "../utils/token.utils.js";
 
 /**
  * Authentication Controller
@@ -16,6 +22,9 @@ import logger from "@config/logger.js";
 export const register = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const result = await authService.register(req.body);
+    if (env.AUTH_USE_COOKIES) {
+      setRefreshTokenCookie(res, result.tokens.refreshToken);
+    }
     logger.info(`User registered: ${result.user.email}`);
     sendSuccess(res, result, 201);
   }
@@ -28,6 +37,9 @@ export const register = asyncHandler(
 export const login = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const result = await authService.login(req.body);
+    if (env.AUTH_USE_COOKIES) {
+      setRefreshTokenCookie(res, result.tokens.refreshToken);
+    }
     logger.info(`User logged in: ${result.user.email}`);
     sendSuccess(res, result, 200);
   }
@@ -39,8 +51,15 @@ export const login = asyncHandler(
  */
 export const refreshToken = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const { refreshToken } = req.body;
+    const refreshToken = getRefreshTokenFromRequest(req);
+    if (!refreshToken) {
+      sendError(res, 400, "Refresh token is required", "BAD_REQUEST");
+      return;
+    }
     const tokens = await authService.refreshAccessToken(refreshToken);
+    if (env.AUTH_USE_COOKIES) {
+      setRefreshTokenCookie(res, tokens.refreshToken);
+    }
     sendSuccess(res, tokens, 200);
   }
 );
@@ -56,7 +75,6 @@ export const getProfile = asyncHandler(
       return;
     }
 
-    // In production, fetch full user details from database
     sendSuccess(res, req.user, 200);
   }
 );
@@ -89,7 +107,15 @@ export const changePassword = asyncHandler(
  */
 export const logout = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    logger.info(`User logged out: ${req.user?.email}`);
+    if (req.user) {
+      await authService.logout(req.user.userId);
+      logger.info(`User logged out: ${req.user.email}`);
+    }
+
+    if (env.AUTH_USE_COOKIES) {
+      clearRefreshTokenCookie(res);
+    }
+
     sendSuccess(res, { message: "Logged out successfully" }, 200);
   }
 );
