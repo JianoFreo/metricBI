@@ -9,6 +9,7 @@ import { sendError } from "@common/utils/response.js";
 import logger from "@config/logger.js";
 import authRoutes from "@features/auth/routes/auth.routes.js";
 import companyRoutes from "@features/tenant/routes/company.routes.js";
+import assetRoutes from "@features/assets/routes/asset.routes.js";
 
 const app: Application = express();
 
@@ -58,6 +59,7 @@ app.get("/health", (req: Request, res: Response) => {
  */
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/companies", companyRoutes);
+app.use("/api/v1/assets", assetRoutes);
 
 /**
  * API Documentation
@@ -69,6 +71,7 @@ app.get("/api/v1", (req: Request, res: Response) => {
     endpoints: {
       auth: "/api/v1/auth",
       companies: "/api/v1/companies",
+      assets: "/api/v1/assets",
     },
   });
 });
