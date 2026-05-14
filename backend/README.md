@@ -102,9 +102,110 @@ npm run lint
 npm run format
 ```
 
-## 📚 API Endpoints
+## � Production-Grade Authentication System
 
-### Authentication
+### Overview
+A SaaS-ready JWT + refresh token authentication system with role-based access control (RBAC), multi-tenancy support, bcrypt password hashing, and secure cookie handling.
+
+### Key Features
+
+#### 1. **JWT Token System**
+- **Access Token**: 15-minute expiry (short-lived, in memory)
+- **Refresh Token**: 7-day expiry (long-lived, HTTP-only cookie or request body)
+- **Token Rotation**: Refresh tokens are rotated on every refresh call
+- **Hash Storage**: Refresh tokens are hashed in DB for security (invalidates old tokens)
+
+#### 2. **Password Security**
+- bcryptjs with 10-salt rounds
+- Passwords never sent in responses
+- Secure password change forces re-login
+- Minimum 8 chars, requires uppercase, lowercase, number
+
+#### 3. **Multi-Tenancy**
+- Every user belongs to a company (tenant)
+- Email uniqueness scoped per company
+- JWT includes `companyId` for tenant isolation
+- Cross-tenant access prevented at middleware level
+
+#### 4. **Role-Based Access Control (RBAC)**
+```
+viewer     → Read-only (dashboards, reports)
+analyst    → Read + analysis
+manager    → Create/update resources
+admin      → Full company control + user management
+super_admin → Platform admin (any tenant)
+```
+
+#### 5. **Secure Cookie Handling**
+```typescript
+// Optional HttpOnly cookie storage (controlled by AUTH_USE_COOKIES env var)
+// Features:
+// - HttpOnly flag (prevents JavaScript access)
+// - Secure flag (HTTPS only in production)
+// - SameSite=strict (CSRF protection)
+// - 7-day max age
+// - Path restricted to /api/v1/auth/refresh
+```
+
+#### 6. **Rate Limiting**
+- Auth endpoints: 5 attempts per 15 minutes
+- API endpoints: 100 requests per 15 minutes
+- Prevents brute force and DDoS attacks
+
+#### 7. **Comprehensive Validation**
+All inputs validated with Zod:
+- Email format validation
+- Password strength requirements
+- Company ID verification
+- Character length constraints
+
+### Authentication Flow
+
+#### Register
+```
+1. POST /api/v1/auth/register
+2. Validate input (email, password, company)
+3. Check email uniqueness in company
+4. Hash password with bcrypt
+5. Create user document
+6. Generate JWT + Refresh token
+7. Hash refresh token + store in DB
+8. Return user + tokens (+ cookie if enabled)
+```
+
+#### Login
+```
+1. POST /api/v1/auth/login
+2. Find user by email + company
+3. Compare password with stored hash
+4. Update lastLogin timestamp
+5. Generate new token pair
+6. Hash refresh token + store in DB
+7. Return user + tokens (+ cookie if enabled)
+```
+
+#### Refresh Token
+```
+1. POST /api/v1/auth/refresh (with refresh token in body or cookie)
+2. Verify refresh token signature
+3. Compare provided token with stored hash in DB
+4. Generate new access token
+5. Rotate refresh token (new hash stored)
+6. Return new token pair (+ updated cookie if enabled)
+```
+
+#### Protected Endpoints
+```
+1. Extract Bearer token from Authorization header
+2. Verify JWT signature with access secret
+3. Extract user + companyId from token
+4. Attach to request context (req.user, req.companyId)
+5. Proceed to route handler
+```
+
+### API Endpoints
+
+#### Authentication
 - `POST /api/v1/auth/register` - Register new user
 - `POST /api/v1/auth/login` - Login user
 - `POST /api/v1/auth/refresh` - Refresh access token

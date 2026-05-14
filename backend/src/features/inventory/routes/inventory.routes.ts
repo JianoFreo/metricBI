@@ -30,34 +30,34 @@ router.use(protect, verifyTenant);
 router.post(
   "/",
   apiLimiter,
-  requireRole(AuthRole.ADMIN, AuthRole.MANAGER),
+  requireRole("admin" as AuthRole, "manager" as AuthRole),
   validate(createInventoryItemSchema),
   createInventoryItem
 );
 
 router.get(
   "/",
-  requireRole(AuthRole.VIEWER, AuthRole.ANALYST, AuthRole.MANAGER, AuthRole.ADMIN, AuthRole.SUPER_ADMIN),
+  requireRole("viewer" as AuthRole, "analyst" as AuthRole, "manager" as AuthRole, "admin" as AuthRole, "super_admin" as AuthRole),
   validateQuery(inventoryQuerySchema),
   listInventoryItems
 );
 
 router.get(
   "/low-stock",
-  requireRole(AuthRole.VIEWER, AuthRole.ANALYST, AuthRole.MANAGER, AuthRole.ADMIN, AuthRole.SUPER_ADMIN),
+  requireRole("viewer" as AuthRole, "analyst" as AuthRole, "manager" as AuthRole, "admin" as AuthRole, "super_admin" as AuthRole),
   getLowStockItems
 );
 
 router.get(
   "/:itemId",
-  requireRole(AuthRole.VIEWER, AuthRole.ANALYST, AuthRole.MANAGER, AuthRole.ADMIN, AuthRole.SUPER_ADMIN),
+  requireRole("viewer" as AuthRole, "analyst" as AuthRole, "manager" as AuthRole, "admin" as AuthRole, "super_admin" as AuthRole),
   validateParams(inventoryItemIdParamsSchema),
   getInventoryItemById
 );
 
 router.put(
   "/:itemId",
-  requireRole(AuthRole.ADMIN, AuthRole.MANAGER),
+  requireRole("admin" as AuthRole, "manager" as AuthRole),
   validateParams(inventoryItemIdParamsSchema),
   validate(updateInventoryItemSchema),
   updateInventoryItem
@@ -65,7 +65,7 @@ router.put(
 
 router.post(
   "/:itemId/stock-in",
-  requireRole(AuthRole.ADMIN, AuthRole.MANAGER),
+  requireRole("admin" as AuthRole, "manager" as AuthRole),
   validateParams(inventoryItemIdParamsSchema),
   validate(stockTransactionSchema),
   stockIn
@@ -73,7 +73,7 @@ router.post(
 
 router.post(
   "/:itemId/stock-out",
-  requireRole(AuthRole.ADMIN, AuthRole.MANAGER),
+  requireRole("admin" as AuthRole, "manager" as AuthRole),
   validateParams(inventoryItemIdParamsSchema),
   validate(stockTransactionSchema),
   stockOut
@@ -81,7 +81,7 @@ router.post(
 
 router.post(
   "/:itemId/adjust",
-  requireRole(AuthRole.ADMIN, AuthRole.MANAGER),
+  requireRole("admin" as AuthRole, "manager" as AuthRole),
   validateParams(inventoryItemIdParamsSchema),
   validate(stockTransactionSchema),
   adjustStock
@@ -89,14 +89,14 @@ router.post(
 
 router.get(
   "/:itemId/history",
-  requireRole(AuthRole.ADMIN, AuthRole.MANAGER),
+  requireRole("admin" as AuthRole, "manager" as AuthRole),
   validateParams(inventoryItemIdParamsSchema),
   getInventoryHistory
 );
 
 router.get(
   "/:itemId/transactions",
-  requireRole(AuthRole.ADMIN, AuthRole.MANAGER),
+  requireRole("admin" as AuthRole, "manager" as AuthRole),
   validateParams(inventoryItemIdParamsSchema),
   getInventoryTransactions
 );
