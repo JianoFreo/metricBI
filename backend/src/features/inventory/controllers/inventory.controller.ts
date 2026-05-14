@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "@common/utils/asyncHandler.js";
-import { sendSuccess } from "@common/utils/response.js";
-import { inventoryService } from "../services/inventory.service.js";
+import { asyncHandler } from "@common/utils/asyncHandler";
+import { sendSuccess } from "@common/utils/response";
+import { inventoryService } from "../services/inventory.service";
 
 export const createInventoryItem = asyncHandler(async (req: Request, res: Response) => {
   const item = await inventoryService.createItem(req.companyId!, req.user!.userId, req.body);

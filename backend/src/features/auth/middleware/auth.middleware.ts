@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import env from "@config/env.js";
-import { AuthenticationError, AuthorizationError } from "@common/utils/errors.js";
-import { JwtPayload, DecodedToken, AuthRole } from "../types/auth.types.js";
+import env from "@config/env";
+import { AuthenticationError, AuthorizationError } from "@common/utils/errors";
+import { JwtPayload, DecodedToken, AuthRole } from "../types/auth.types";
 
 /**
  * Extend Express Request interface to include authenticated user

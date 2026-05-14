@@ -1,8 +1,8 @@
 import { Response, Request } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import env from "@config/env.js";
-import { TokenPair, JwtPayload, DecodedToken } from "../types/auth.types.js";
+import env from "@config/env";
+import { TokenPair, JwtPayload, DecodedToken } from "../types/auth.types";
 
 const REFRESH_COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 

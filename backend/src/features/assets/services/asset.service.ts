@@ -1,6 +1,6 @@
-import { Asset } from "../models/Asset.js";
-import { NotFoundError } from "@common/utils/errors.js";
-import { AssetStatus, IAssetHistoryEntry } from "../types/asset.types.js";
+import { Asset } from "../models/Asset";
+import { NotFoundError } from "@common/utils/errors";
+import { AssetStatus, IAssetHistoryEntry } from "../types/asset.types";
 
 type CreateAssetInput = {
   name: string;

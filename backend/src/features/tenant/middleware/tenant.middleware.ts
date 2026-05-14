@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import env from "@config/env.js";
+import env from "@config/env";
 import {
   AuthenticationError,
   AuthorizationError,
-} from "@common/utils/errors.js";
-import { UserRole, ROLE_PERMISSIONS } from "../types/tenant.types.js";
+} from "@common/utils/errors";
+import { UserRole, ROLE_PERMISSIONS } from "../types/tenant.types";
 
 
 /**

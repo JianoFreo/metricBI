@@ -1,14 +1,14 @@
 import { Router } from "express";
-import * as authController from "../controllers/auth.controller.js";
-import { validate } from "@common/middleware/validation.middleware.js";
-import { protect, authorize, requireRole, verifyTenant } from "../middleware/auth.middleware.js";
-import { authLimiter } from "@common/middleware/rateLimiter.middleware.js";
+import * as authController from "../controllers/auth.controller";
+import { validate } from "@common/middleware/validation.middleware";
+import { protect, authorize, requireRole, verifyTenant } from "../middleware/auth.middleware";
+import { authLimiter } from "@common/middleware/rateLimiter.middleware";
 import {
   registerSchema,
   loginSchema,
   refreshTokenSchema,
   changePasswordSchema,
-} from "../schemas/auth.schemas.js";
+} from "../schemas/auth.schemas";
 
 const router = Router();
 

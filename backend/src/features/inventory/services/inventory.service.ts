@@ -1,8 +1,8 @@
-import { InventoryItem } from "../models/InventoryItem.js";
-import { InventoryTransaction } from "../models/InventoryTransaction.js";
-import { NotFoundError, ConflictError } from "@common/utils/errors.js";
-import { AssetStatus } from "@features/assets/types/asset.types.js";
-import { IInventoryHistoryEntry, InventoryTransactionType } from "../types/inventory.types.js";
+import { InventoryItem } from "../models/InventoryItem";
+import { InventoryTransaction } from "../models/InventoryTransaction";
+import { NotFoundError, ConflictError } from "@common/utils/errors";
+import { AssetStatus } from "@features/assets/types/asset.types";
+import { IInventoryHistoryEntry, InventoryTransactionType } from "../types/inventory.types";
 
 type CreateInventoryInput = {
   name: string;

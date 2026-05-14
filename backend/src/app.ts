@@ -1,18 +1,19 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import cors from "cors";
-import env from "@config/env.js";
-import { errorHandler } from "@common/middleware/error.middleware.js";
-import { apiLimiter } from "@common/middleware/rateLimiter.middleware.js";
-import { sendError } from "@common/utils/response.js";
+import env from "@config/env";
+import { errorHandler } from "@common/middleware/error.middleware";
+import { apiLimiter } from "@common/middleware/rateLimiter.middleware";
+import { sendError } from "@common/utils/response";
 
-import logger from "@config/logger.js";
-import authRoutes from "@features/auth/routes/auth.routes.js";
-import companyRoutes from "@features/tenant/routes/company.routes.js";
-import assetRoutes from "@features/assets/routes/asset.routes.js";
-import inventoryRoutes from "@features/inventory/routes/inventory.routes.js";
-import analyticsRoutes from "@features/analytics/routes/analytics.routes.js";
-import dashboardRoutes from "@features/dashboard/routes/dashboard.routes.js";
+import logger from "@config/logger";
+import authRoutes from "@features/auth/routes/auth.routes";
+import companyRoutes from "@features/tenant/routes/company.routes";
+import assetRoutes from "@features/assets/routes/asset.routes";
+import inventoryRoutes from "@features/inventory/routes/inventory.routes";
+// Analytics and Dashboard temporarily disabled
+// import analyticsRoutes from "@features/analytics/routes/analytics.routes";
+// import dashboardRoutes from "@features/dashboard/routes/dashboard.routes";
 
 const app: Application = express();
 

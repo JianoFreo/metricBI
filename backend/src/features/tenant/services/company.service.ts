@@ -1,8 +1,8 @@
-import { CompanyRepository } from "../repositories/company.repository.js";
-import { UserRepository } from "../repositories/user.repository.js";
-import { ICompany, UserRole } from "../types/tenant.types.js";
-import { ConflictError, NotFoundError, AuthorizationError } from "@common/utils/errors.js";
-import { generateSlug } from "../utils/slug-generator.js";
+import { CompanyRepository } from "../repositories/company.repository";
+import { UserRepository } from "../repositories/user.repository";
+import { ICompany, UserRole } from "../types/tenant.types";
+import { ConflictError, NotFoundError, AuthorizationError } from "@common/utils/errors";
+import { generateSlug } from "../utils/slug-generator";
 
 export class CompanyService {
   private repository = new CompanyRepository();

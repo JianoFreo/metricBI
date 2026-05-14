@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import { authService } from "../services/auth.service.js";
-import { sendSuccess, sendError } from "@common/utils/response.js";
-import { asyncHandler } from "@common/utils/asyncHandler.js";
-import logger from "@config/logger.js";
-import env from "@config/env.js";
+import { authService } from "../services/auth.service";
+import { sendSuccess, sendError } from "@common/utils/response";
+import { asyncHandler } from "@common/utils/asyncHandler";
+import logger from "@config/logger";
+import env from "@config/env";
 import {
   getRefreshTokenFromRequest,
   setRefreshTokenCookie,
   clearRefreshTokenCookie,
-} from "../utils/token.utils.js";
+} from "../utils/token.utils";
 
 /**
  * Authentication Controller

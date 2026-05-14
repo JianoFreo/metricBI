@@ -1,5 +1,5 @@
 import rateLimit from "express-rate-limit";
-import logger from "@config/logger.js";
+import logger from "@config/logger";
 
 /**
  * Creates a rate limiter middleware with specified parameters

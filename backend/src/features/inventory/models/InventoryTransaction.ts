@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IInventoryTransaction } from "../types/inventory.types.js";
+import { IInventoryTransaction } from "../types/inventory.types";
 
 const InventoryTransactionSchema = new Schema<IInventoryTransaction & Document>(
   {

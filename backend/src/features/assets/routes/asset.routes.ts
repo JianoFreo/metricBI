@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { protect, requireRole, verifyTenant } from "@features/auth/middleware/auth.middleware.js";
-import { validate, validateParams, validateQuery } from "@common/middleware/validation.middleware.js";
-import { apiLimiter } from "@common/middleware/rateLimiter.middleware.js";
-import { AuthRole } from "@features/auth/types/auth.types.js";
+import { protect, requireRole, verifyTenant } from "@features/auth/middleware/auth.middleware";
+import { validate, validateParams, validateQuery } from "@common/middleware/validation.middleware";
+import { apiLimiter } from "@common/middleware/rateLimiter.middleware";
+import { AuthRole } from "@features/auth/types/auth.types";
 import {
   assetIdParamsSchema,
   createAssetSchema,
   listAssetsQuerySchema,
   updateAssetLifecycleSchema,
   updateAssetStatusSchema,
-} from "../schemas/asset.schemas.js";
+} from "../schemas/asset.schemas";
 import {
   createAsset,
   listAssets,
@@ -17,7 +17,7 @@ import {
   updateAssetLifecycle,
   updateAssetStatus,
   getAssetHistory,
-} from "../controllers/asset.controller.js";
+} from "../controllers/asset.controller";
 
 const router = Router();
 

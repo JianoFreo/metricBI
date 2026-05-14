@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AuthRole } from "../types/auth.types.js";
+import { AuthRole } from "../types/auth.types";
 
 /**
  * Validation schemas for authentication endpoints

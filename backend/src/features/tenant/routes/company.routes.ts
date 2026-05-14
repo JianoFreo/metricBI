@@ -4,7 +4,7 @@ import {
   verifyTenantAccess,
   requireRole,
   requirePermission,
-} from "../middleware/tenant.middleware.js";
+} from "../middleware/tenant.middleware";
 import {
   createCompany,
   getCompanyDetails,
@@ -14,15 +14,15 @@ import {
   removeMember,
   getSubscriptionInfo,
   deleteCompany,
-} from "../controllers/company.controller.js";
-import { validate } from "@common/middleware/validation.middleware.js";
+} from "../controllers/company.controller";
+import { validate } from "@common/middleware/validation.middleware";
 import {
   createCompanySchema,
   updateCompanySettingsSchema,
   addMemberSchema,
-} from "../schemas/company.schemas.js";
-import { apiLimiter } from "@common/middleware/rateLimiter.middleware.js";
-import { UserRole } from "../types/tenant.types.js";
+} from "../schemas/company.schemas";
+import { apiLimiter } from "@common/middleware/rateLimiter.middleware";
+import { UserRole } from "../types/tenant.types";
 
 const router = Router();
 

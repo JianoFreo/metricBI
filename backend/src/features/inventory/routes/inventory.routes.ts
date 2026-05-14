@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { protect, requireRole, verifyTenant } from "@features/auth/middleware/auth.middleware.js";
-import { validate, validateParams, validateQuery } from "@common/middleware/validation.middleware.js";
-import { apiLimiter } from "@common/middleware/rateLimiter.middleware.js";
-import { AuthRole } from "@features/auth/types/auth.types.js";
+import { protect, requireRole, verifyTenant } from "@features/auth/middleware/auth.middleware";
+import { validate, validateParams, validateQuery } from "@common/middleware/validation.middleware";
+import { apiLimiter } from "@common/middleware/rateLimiter.middleware";
+import { AuthRole } from "@features/auth/types/auth.types";
 import {
   createInventoryItemSchema,
   updateInventoryItemSchema,
   stockTransactionSchema,
   inventoryItemIdParamsSchema,
   inventoryQuerySchema,
-} from "../schemas/inventory.schemas.js";
+} from "../schemas/inventory.schemas";
 import {
   createInventoryItem,
   listInventoryItems,
@@ -21,7 +21,7 @@ import {
   getLowStockItems,
   getInventoryHistory,
   getInventoryTransactions,
-} from "../controllers/inventory.controller.js";
+} from "../controllers/inventory.controller";
 
 const router = Router();
 

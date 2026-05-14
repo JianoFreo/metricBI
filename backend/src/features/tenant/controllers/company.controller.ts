@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { CompanyService } from "../services/company.service.js";
-import { asyncHandler } from "@common/utils/asyncHandler.js";
-import { sendSuccess, sendPaginated } from "@common/utils/response.js";
+import { CompanyService } from "../services/company.service";
+import { asyncHandler } from "@common/utils/asyncHandler";
+import { sendSuccess, sendPaginated } from "@common/utils/response";
 
 const service = new CompanyService();
 

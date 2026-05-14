@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { ICompany } from "../types/tenant.types.js";
+import { ICompany } from "../types/tenant.types";
 
 /**
  * Company Schema - Represents a tenant in the multi-tenant system

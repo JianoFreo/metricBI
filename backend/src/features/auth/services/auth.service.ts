@@ -1,22 +1,22 @@
 import jwt from "jsonwebtoken";
-import env from "@config/env.js";
-import { User } from "../models/User.js";
+import env from "@config/env";
+import { User } from "../models/User";
 import {
   JwtPayload,
   TokenPair,
   DecodedToken,
   IAuthResponse,
-} from "../types/auth.types.js";
-import { AuthenticationError, ConflictError } from "@common/utils/errors.js";
-import { authRepository } from "../repositories/auth.repository.js";
-import { RegisterInput, LoginInput } from "../schemas/auth.schemas.js";
-import logger from "@config/logger.js";
+} from "../types/auth.types";
+import { AuthenticationError, ConflictError } from "@common/utils/errors";
+import { authRepository } from "../repositories/auth.repository";
+import { RegisterInput, LoginInput } from "../schemas/auth.schemas";
+import logger from "@config/logger";
 import {
   createTokenPair,
   hashRefreshToken,
   compareRefreshToken,
   verifyToken,
-} from "../utils/token.utils.js";
+} from "../utils/token.utils";
 
 /**
  * Authentication Service

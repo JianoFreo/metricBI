@@ -1,12 +1,12 @@
 import { Document } from "mongoose";
-import { Company } from "../models/Company.js";
-import { User } from "../models/User.js";
-import { ICompany } from "../types/tenant.types.js";
+import { Company } from "../models/Company";
+import { User } from "../models/User";
+import { ICompany } from "../types/tenant.types";
 import {
   scopeByTenant,
   buildTenantFilter,
   verifyResourceOwnership,
-} from "../utils/query-helper.js";
+} from "../utils/query-helper";
 
 export class CompanyRepository {
   /**

@@ -1,6 +1,6 @@
-import { User } from "../models/User.js";
-import { IUser } from "../types/auth.types.js";
-import { ConflictError, NotFoundError } from "@common/utils/errors.js";
+import { User } from "../models/User";
+import { IUser } from "../types/auth.types";
+import { ConflictError, NotFoundError } from "@common/utils/errors";
 
 /**
  * Repository for User database operations

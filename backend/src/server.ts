@@ -1,9 +1,9 @@
 import "dotenv/config";
-import env from "@config/env.js";
-import logger from "@config/logger.js";
-import { connectDatabase, disconnectDatabase } from "@config/database.js";
-import { connectRedis, disconnectRedis } from "@config/redis.js";
-import app from "./app.js";
+import env from "@config/env";
+import logger from "@config/logger";
+import { connectDatabase, disconnectDatabase } from "@config/database";
+import { connectRedis, disconnectRedis } from "@config/redis";
+import app from "./app";
 
 const PORT = env.PORT;
 

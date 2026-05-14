@@ -1,1 +1,1 @@
-export { User } from "@features/auth/models/User.js";
+export { User } from "@features/auth/models/User";

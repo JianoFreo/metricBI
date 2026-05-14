@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IInventoryItem } from "../types/inventory.types.js";
+import { IInventoryItem } from "../types/inventory.types";
 
 const InventoryHistorySchema = new Schema(
   {

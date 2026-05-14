@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "@common/utils/asyncHandler.js";
-import { sendSuccess } from "@common/utils/response.js";
-import { assetService } from "../services/asset.service.js";
+import { asyncHandler } from "@common/utils/asyncHandler";
+import { sendSuccess } from "@common/utils/response";
+import { assetService } from "../services/asset.service";
 
 export const createAsset = asyncHandler(async (req: Request, res: Response) => {
   const asset = await assetService.createAsset(req.companyId!, req.user!.userId, req.body);

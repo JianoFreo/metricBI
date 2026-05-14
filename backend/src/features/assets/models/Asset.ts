@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IAsset } from "../types/asset.types.js";
+import { IAsset } from "../types/asset.types";
 
 const AssetHistorySchema = new Schema(
   {

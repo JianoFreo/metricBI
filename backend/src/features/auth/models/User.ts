@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
-import { IUser, AuthRole } from "../types/auth.types.js";
+import { IUser, AuthRole } from "../types/auth.types";
 
 /**
  * User Schema - Stores user credentials and profile information

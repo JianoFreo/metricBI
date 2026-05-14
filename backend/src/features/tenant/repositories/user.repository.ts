@@ -1,6 +1,6 @@
-import { User } from "../models/User.js";
-import { IUserMultiTenant } from "../types/tenant.types.js";
-import { buildTenantFilter, verifyResourceOwnership } from "../utils/query-helper.js";
+import { User } from "../models/User";
+import { IUserMultiTenant } from "../types/tenant.types";
+import { buildTenantFilter, verifyResourceOwnership } from "../utils/query-helper";
 
 export class UserRepository {
   /**
