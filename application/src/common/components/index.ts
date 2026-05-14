@@ -1,3 +1,8 @@
+/**
+ * Components Module Exports
+ * Includes base component classes and UI components
+ */
+
 import React from 'react';
 import {
   View,
@@ -10,6 +15,20 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
+
+// Export base component classes
+export {
+  BaseComponent,
+  BaseComponentProps,
+  BaseStateComponent,
+  BaseStateComponentProps,
+  BaseScreen,
+  BaseScreenProps,
+  BaseListComponent,
+  BaseListComponentProps,
+  BaseFormComponent,
+  BaseFormComponentProps,
+} from './base.component';
 
 // Card Component
 interface CardProps {

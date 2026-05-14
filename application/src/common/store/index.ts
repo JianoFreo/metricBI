@@ -1,6 +1,22 @@
+/**
+ * Store Module Exports
+ * Includes both Zustand stores and OOP base store classes
+ */
+
 import { create } from 'zustand';
 import { Dashboard, DashboardQuery, AIInsight } from '../types';
 import { dashboardApi } from '../api/services';
+
+// Export base store classes
+export {
+  BaseStore,
+  StoreState,
+  EntityStore,
+  AuthStoreBase,
+  AuthStoreState,
+  AsyncOperationStore,
+  AsyncOperationState,
+} from './base.store';
 
 interface DashboardStore {
   dashboard: Dashboard | null;

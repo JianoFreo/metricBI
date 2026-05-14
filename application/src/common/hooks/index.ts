@@ -1,5 +1,25 @@
+/**
+ * Hooks Module Exports
+ * Includes both custom hooks and base hook utilities
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import ApiClient from '../api/client';
+
+// Export base hook utilities
+export {
+  useAsyncOperation,
+  useFormState,
+  useFetchData,
+  useSearch,
+  usePagination,
+  useDebounce,
+  usePreviousValue,
+  useLocalStorage,
+  useIsMounted,
+  usePreviousProps,
+} from './base.hooks';
+export type { BaseHookOptions } from './base.hooks';
 
 /**
  * Custom hook for fetching data with loading and error states

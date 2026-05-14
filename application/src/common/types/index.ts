@@ -1,6 +1,41 @@
 /**
- * Common Types and Interfaces
+ * Types Module Exports
+ * Includes both domain types and base type definitions
  */
+
+// Export all base types
+export {
+  ApiResponse,
+  PaginatedResponse,
+  ApiError,
+  BaseEntity,
+  User,
+  AuthTokens,
+  LoginCredentials,
+  RegisterCredentials,
+  Asset,
+  InventoryItem,
+  Order,
+  OrderItem,
+  ChatMessage,
+  ChatConversation,
+  DashboardMetrics,
+  Report,
+  Alert,
+  FilterOptions,
+  ComponentState,
+  FormError,
+  Toast,
+  ModalState,
+  TableState,
+  SearchState,
+  FileUpload,
+  ThemeConfig,
+  Logger,
+  CacheEntry,
+  ApiRequestConfig,
+  BulkOperationResult,
+} from './base.types';
 
 // Auth Types
 export interface User {
