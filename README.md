@@ -1,3 +1,24 @@
+# MetricBI Infrastructure
+
+## Database Layer
+MongoDB Atlas
+
+## Cache Layer
+Redis Cloud
+
+## AI Layer
+Gemini
+
+## File Storage
+Cloudinary
+
+## Notification Layer
+Firebase
+
+## Hosting
+Render
+
+
 # metricBI Setup Guide
 
 Follow the steps below to set up the complete `metricBI` project.
