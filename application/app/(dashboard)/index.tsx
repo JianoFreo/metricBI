@@ -1,190 +1,361 @@
-import React, { useEffect } from 'react';
+/**
+ * Dashboard Screen
+ * Main dashboard with KPIs, charts, insights, and quick actions
+ * Uses OOP architecture with BaseScreen and ServiceFactory
+ */
+
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  StyleSheet,
   ScrollView,
-  Text,
   RefreshControl,
   ActivityIndicator,
-  Dimensions,
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
 } from 'react-native';
-import { useDashboardStore } from '@/common/store';
-import { useAuth } from '@/common/context/auth.context';
+import { useFocusEffect } from '@react-navigation/native';
+import { ServiceFactory } from '@/common/api';
+import { KPICard } from '@/common/components/KPICard';
 import {
-  SectionHeader,
-  StatCard,
-  Card,
-  ErrorMessage,
-  Badge,
-} from '@/common/components';
+  SalesTrendChart,
+  InventoryStatusChart,
+  ProcurementOrdersChart,
+  AssetCategoriesPie,
+} from '@/common/components/Charts';
+import { AIInsightsSummary } from '@/common/components/AIInsights';
+import { QuickActions } from '@/common/components/QuickActions';
+import type { Dashboard, AIInsight } from '@/common/types';
+import { FormatUtils } from '@/common/utils';
+
+interface DashboardScreenState {
+  dashboard: Dashboard | null;
+  insights: AIInsight[];
+  isLoading: boolean;
+  error: string | null;
+  lastUpdated: Date | null;
+}
 
 /**
- * Dashboard Screen - Main overview of all metrics
+ * Dashboard Screen Component
  */
 export default function DashboardScreen() {
-  const { user } = useAuth();
-  const {
-    dashboard,
-    isLoading,
-    error,
-    period,
-    fetchDashboard,
-    setPeriod,
-    clearError,
-  } = useDashboardStore();
+  const [state, setState] = useState<DashboardScreenState>({
+    dashboard: null,
+    insights: [],
+    isLoading: true,
+    error: null,
+    lastUpdated: null,
+  });
 
-  useEffect(() => {
-    fetchDashboard();
-  }, [period]);
+  const dashboardService = ServiceFactory.getDashboardService();
 
-  const handleRefresh = async () => {
-    await fetchDashboard();
+  /**
+   * Fetch dashboard data
+   */
+  const fetchDashboard = async () => {
+    try {
+      setState((s) => ({ ...s, isLoading: true, error: null }));
+
+      // Fetch dashboard data
+      const dashboardResponse = await dashboardService.get<Dashboard>('/');
+
+      if (!dashboardResponse.success || !dashboardResponse.data) {
+        throw new Error('Failed to fetch dashboard');
+      }
+
+      const dashboard = dashboardResponse.data;
+
+      // Fetch insights
+      const insightsResponse = await dashboardService.get<AIInsight[]>(
+        '/insights'
+      );
+      const insights = insightsResponse.data || [];
+
+      setState((s) => ({
+        ...s,
+        dashboard,
+        insights,
+        isLoading: false,
+        lastUpdated: new Date(),
+      }));
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to load dashboard';
+      setState((s) => ({ ...s, isLoading: false, error: errorMessage }));
+      console.error('Dashboard fetch error:', error);
+    }
   };
 
-  if (isLoading && !dashboard) {
+  /**
+   * Fetch on mount and screen focus
+   */
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Optional: Refresh data on screen focus
+      // fetchDashboard();
+      return () => {};
+    }, [])
+  );
+
+  /**
+   * Quick action handlers
+   */
+  const handleQuickAction = (action: string) => {
+    console.log('Quick action:', action);
+    // Navigate or perform action
+  };
+
+  if (state.isLoading && !state.dashboard) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color="#4F46E5" />
+        <Text style={styles.loadingText}>Loading dashboard...</Text>
       </View>
     );
   }
 
+  if (state.error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>Error: {state.error}</Text>
+        <Text
+          style={styles.retryButton}
+          onPress={fetchDashboard}
+        >
+          Tap to retry
+        </Text>
+      </View>
+    );
+  }
+
+  const dashboard = state.dashboard;
+  if (!dashboard) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>No data available</Text>
+      </View>
+    );
+  }
+
+  const financial = dashboard.financialSummary;
+  const assets = dashboard.assetsSummary;
+  const inventory = dashboard.inventoryStatus;
+  const procurement = dashboard.procurementOverview;
+
+  const quickActions = [
+    {
+      id: 'create-order',
+      label: 'Create Order',
+      icon: 'plus-circle',
+      color: '#4F46E5',
+      onPress: () => handleQuickAction('create-order'),
+      disabled: false,
+    },
+    {
+      id: 'low-stock',
+      label: 'Low Stock',
+      icon: 'alert-circle',
+      color: '#F59E0B',
+      onPress: () => handleQuickAction('low-stock'),
+      badge: inventory.lowStockItems,
+      disabled: false,
+    },
+    {
+      id: 'pending-orders',
+      label: 'Pending',
+      icon: 'clock',
+      color: '#3B82F6',
+      onPress: () => handleQuickAction('pending-orders'),
+      badge: procurement.totalPendingOrders,
+      disabled: false,
+    },
+    {
+      id: 'reports',
+      label: 'Reports',
+      icon: 'file-chart',
+      color: '#10B981',
+      onPress: () => handleQuickAction('reports'),
+      disabled: false,
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: 'cog',
+      color: '#8B5CF6',
+      onPress: () => handleQuickAction('settings'),
+      disabled: false,
+    },
+    {
+      id: 'export',
+      label: 'Export',
+      icon: 'download',
+      color: '#EC4899',
+      onPress: () => handleQuickAction('export'),
+      disabled: false,
+    },
+  ];
+
   return (
-    <ScrollView
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
-      }
-    >
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Good morning, {user?.name.split(' ')[0]}</Text>
-          <Text style={styles.date}>
-            {new Date().toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </Text>
-        </View>
-      </View>
-
-      {/* Error Message */}
-      {error && (
-        <ErrorMessage message={error} onDismiss={clearError} />
-      )}
-
-      {/* Period Selection */}
-      <View style={styles.periodSelector}>
-        {['today', 'week', 'month', 'quarter', 'year'].map((p: any) => (
-          <Badge
-            key={p}
-            label={p.charAt(0).toUpperCase() + p.slice(1)}
-            variant={period === p ? 'info' : 'warning'}
+    <>
+      <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" />
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={state.isLoading}
+            onRefresh={fetchDashboard}
+            tintColor="#4F46E5"
+            colors={['#4F46E5']}
           />
-        ))}
-      </View>
+        }
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.greeting}>Good day</Text>
+            <Text style={styles.subtitle}>
+              Last updated:{' '}
+              {state.lastUpdated
+                ? FormatUtils.formatTime(state.lastUpdated)
+                : 'Loading...'}
+            </Text>
+          </View>
+        </View>
 
-      {dashboard && (
-        <>
-          {/* Financial Summary */}
-          <SectionHeader title="Financial Overview" />
-          <View style={styles.statsGrid}>
-            <StatCard
-              label="Revenue"
-              value={`$${(dashboard.financialSummary.revenue / 1000).toFixed(1)}K`}
-              color="#10B981"
-            />
-            <StatCard
-              label="Expenses"
-              value={`$${(dashboard.financialSummary.expenses / 1000).toFixed(1)}K`}
-              color="#EF4444"
-            />
-            <StatCard
-              label="Profit"
-              value={`$${(dashboard.financialSummary.profit / 1000).toFixed(1)}K`}
+        {/* KPI Cards */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Key Metrics</Text>
+          <View>
+            <KPICard
+              title="Total Revenue"
+              value={FormatUtils.formatCurrency(financial.revenue)}
+              change={financial.margin}
+              trend="up"
+              icon="trending-up"
               color="#4F46E5"
             />
-          </View>
-
-          {/* Assets Summary */}
-          <SectionHeader title="Assets" action={{ title: 'View All', onPress: () => {} }} />
-          <Card>
-            <View style={styles.summaryRow}>
-              <View>
-                <Text style={styles.summaryLabel}>Total Assets</Text>
-                <Text style={styles.summaryValue}>${dashboard.assetsSummary.totalAssets.toLocaleString()}</Text>
-              </View>
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{dashboard.assetsSummary.assetCount} items</Text>
-              </View>
-            </View>
-          </Card>
-
-          {/* Inventory Status */}
-          <SectionHeader title="Inventory Status" />
-          <View style={styles.statsGrid}>
-            <StatCard
-              label="Total Items"
-              value={dashboard.inventoryStatus.totalItems}
-              color="#3B82F6"
+            <KPICard
+              title="Total Assets"
+              value={assets.assetCount}
+              unit="items"
+              change={15}
+              trend="up"
+              icon="briefcase"
+              color="#10B981"
             />
-            <StatCard
-              label="Low Stock"
-              value={dashboard.inventoryStatus.lowStockItems}
+            <KPICard
+              title="Inventory Value"
+              value={FormatUtils.formatCurrency(inventory.totalValue)}
+              change={-5}
+              trend="down"
+              icon="package-variant"
               color="#F59E0B"
             />
-            <StatCard
-              label="Out of Stock"
-              value={dashboard.inventoryStatus.outOfStockItems}
-              color="#EF4444"
+            <KPICard
+              title="Pending Orders"
+              value={procurement.totalPendingOrders}
+              unit="orders"
+              change={procurement.onTimeDeliveryRate}
+              trend="up"
+              icon="cart"
+              color="#3B82F6"
             />
           </View>
+        </View>
 
-          {/* Procurement Overview */}
-          <SectionHeader title="Procurement" />
-          <Card>
-            <View style={styles.summaryRow}>
-              <View>
-                <Text style={styles.summaryLabel}>Pending Orders</Text>
-                <Text style={styles.summaryValue}>
-                  {dashboard.procurementOverview.totalPendingOrders}
-                </Text>
-              </View>
-              <View>
-                <Text style={styles.summaryLabel}>On-Time Rate</Text>
-                <Text style={styles.summaryValue}>
-                  {dashboard.procurementOverview.onTimeDeliveryRate}%
-                </Text>
-              </View>
-            </View>
-          </Card>
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <QuickActions
+            actions={quickActions}
+            layout="horizontal"
+          />
+        </View>
 
-          {/* AI Insights */}
-          {dashboard.aiInsights.length > 0 && (
-            <>
-              <SectionHeader title="AI Insights" />
-              {dashboard.aiInsights.map((insight) => (
-                <Card key={insight.id} style={styles.insightCard}>
-                  <View style={styles.insightHeader}>
-                    <Badge label={insight.type} variant="info" />
-                    <Badge label={`${insight.impact} Impact`} variant="warning" />
-                  </View>
-                  <Text style={styles.insightTitle}>{insight.title}</Text>
-                  <Text style={styles.insightDescription}>{insight.description}</Text>
-                  <View style={styles.insightRecommendation}>
-                    <Text style={styles.recommendationLabel}>Recommendation:</Text>
-                    <Text style={styles.recommendationText}>{insight.recommendation}</Text>
-                  </View>
-                </Card>
-              ))}
-            </>
-          )}
-        </>
-      )}
-    </ScrollView>
+        {/* Charts Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Performance</Text>
+
+          {/* Sales Trend */}
+          <SalesTrendChart
+            data={[
+              { date: '2024-01-01', sales: 45000 },
+              { date: '2024-01-02', sales: 52000 },
+              { date: '2024-01-03', sales: 48000 },
+              { date: '2024-01-04', sales: 61000 },
+              { date: '2024-01-05', sales: 55000 },
+              { date: '2024-01-06', sales: 67000 },
+            ]}
+          />
+
+          {/* Inventory Status */}
+          <InventoryStatusChart
+            inStock={inventory.totalItems - inventory.lowStockItems - inventory.outOfStockItems}
+            lowStock={inventory.lowStockItems}
+            outOfStock={inventory.outOfStockItems}
+          />
+
+          {/* Procurement Orders */}
+          <ProcurementOrdersChart
+            pending={procurement.totalPendingOrders}
+            confirmed={8}
+            shipped={12}
+            delivered={28}
+          />
+
+          {/* Asset Categories */}
+          <AssetCategoriesPie
+            categories={[
+              {
+                name: 'Equipment',
+                value: 35,
+                color: '#4F46E5',
+                legendFontColor: '#7F8C8D',
+                legendFontSize: 13,
+              },
+              {
+                name: 'Machinery',
+                value: 25,
+                color: '#10B981',
+                legendFontColor: '#7F8C8D',
+                legendFontSize: 13,
+              },
+              {
+                name: 'Vehicles',
+                value: 20,
+                color: '#F59E0B',
+                legendFontColor: '#7F8C8D',
+                legendFontSize: 13,
+              },
+              {
+                name: 'Other',
+                value: 20,
+                color: '#8B5CF6',
+                legendFontColor: '#7F8C8D',
+                legendFontSize: 13,
+              },
+            ]}
+          />
+        </View>
+
+        {/* AI Insights */}
+        <View style={styles.section}>
+          <AIInsightsSummary
+            insights={state.insights}
+            isLoading={state.isLoading}
+            onRefresh={fetchDashboard}
+          />
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer} />
+      </ScrollView>
+    </>
   );
 }
 
@@ -193,52 +364,65 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9FAFB',
   },
-  loadingContainer: {
+  centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 8,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#EF4444',
+    fontWeight: '600',
+  },
+  retryButton: {
+    fontSize: 14,
+    color: '#4F46E5',
+    fontWeight: '600',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#4F46E5',
+    marginTop: 8,
+    backgroundColor: '#EEF2FF',
   },
   header: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 8,
+    paddingBottom: 12,
+    backgroundColor: '#F9FAFB',
   },
   greeting: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#1F2937',
+    color: '#111827',
+    marginBottom: 4,
   },
-  date: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginTop: 4,
-  },
-  periodSelector: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    gap: 12,
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  summaryLabel: {
-    fontSize: 14,
+  subtitle: {
+    fontSize: 12,
     color: '#6B7280',
   },
-  summaryValue: {
-    fontSize: 24,
+  section: {
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
     fontWeight: '700',
-    color: '#1F2937',
-    marginTop: 4,
+    color: '#111827',
+    marginBottom: 12,
   },
+  footer: {
+    height: 20,
+  },
+});
   badge: {
     backgroundColor: '#DBEAFE',
     paddingHorizontal: 12,
