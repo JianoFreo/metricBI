@@ -12,6 +12,7 @@ import companyRoutes from "@features/tenant/routes/company.routes.js";
 import assetRoutes from "@features/assets/routes/asset.routes.js";
 import inventoryRoutes from "@features/inventory/routes/inventory.routes.js";
 import analyticsRoutes from "@features/analytics/routes/analytics.routes.js";
+import dashboardRoutes from "@features/dashboard/routes/dashboard.routes.js";
 
 const app: Application = express();
 
@@ -64,6 +65,7 @@ app.use("/api/v1/companies", companyRoutes);
 app.use("/api/v1/assets", assetRoutes);
 app.use("/api/v1/inventory", inventoryRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 
 /**
  * API Documentation
@@ -78,6 +80,7 @@ app.get("/api/v1", (req: Request, res: Response) => {
       assets: "/api/v1/assets",
       inventory: "/api/v1/inventory",
       analytics: "/api/v1/analytics",
+      dashboard: "/api/v1/dashboard",
     },
   });
 });
