@@ -309,10 +309,18 @@ export function usePreviousValue<T>(value: T) {
 
 /**
  * Hook for local storage
+ * NOTE: This hook uses the browser's localStorage API and is only compatible with web platforms.
+ * For React Native/mobile platforms, use AsyncStorage or expo-secure-store instead.
+ * Use Platform.select() to choose the appropriate storage mechanism.
  */
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [value, setValue] = useState<T>(() => {
     try {
+      // Check if localStorage is available (web only)
+      if (typeof localStorage === 'undefined') {
+        console.warn('localStorage is not available in this environment. Using in-memory storage.');
+        return initialValue;
+      }
       const stored = localStorage.getItem(key);
       return stored ? JSON.parse(stored) : initialValue;
     } catch {
@@ -323,10 +331,15 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   const setStoredValue = useCallback(
     (newValue: T | ((prev: T) => T)) => {
       try {
+        if (typeof localStorage === 'undefined') {
+          console.warn('localStorage is not available. Changes are in-memory only.');
+        }
         const valueToStore =
           newValue instanceof Function ? newValue(value) : newValue;
         setValue(valueToStore);
-        localStorage.setItem(key, JSON.stringify(valueToStore));
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(key, JSON.stringify(valueToStore));
+        }
       } catch (error) {
         console.error(`Error storing value for key "${key}":`, error);
       }
@@ -336,7 +349,9 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
   const removeValue = useCallback(() => {
     try {
-      localStorage.removeItem(key);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(key);
+      }
       setValue(initialValue);
     } catch (error) {
       console.error(`Error removing value for key "${key}":`, error);

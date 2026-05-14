@@ -264,10 +264,11 @@ export interface SearchState {
 }
 
 /**
- * File upload
+ * File upload - Platform-compatible type
  */
 export interface FileUpload {
-  file: File;
+  // File can be either browser File, React Native asset, or Blob
+  file: any; // any to support both File and RN asset types
   progress: number;
   status: "pending" | "uploading" | "completed" | "error";
   error?: string;

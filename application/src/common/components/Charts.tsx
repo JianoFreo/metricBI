@@ -228,10 +228,21 @@ export const ProcurementOrdersChart: React.FC<{
 };
 
 /**
+ * Pie chart data item type
+ */
+interface PieChartDataItem {
+  name: string;
+  value: number;
+  color: string;
+  legendFontColor: string;
+  legendFontSize: number;
+}
+
+/**
  * Asset Categories Pie Chart
  */
 export const AssetCategoriesPie: React.FC<{
-  categories?: Array<{ name: string; value: number }>;
+  categories?: PieChartDataItem[];
 }> = ({
   categories = [
     {

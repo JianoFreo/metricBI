@@ -3,24 +3,14 @@
  * Includes both domain types and base type definitions
  */
 
-// Export all base types
+// Export all base types (excluding those redeclared locally below)
 export {
-  ApiResponse,
-  PaginatedResponse,
-  ApiError,
-  BaseEntity,
-  User,
   AuthTokens,
-  LoginCredentials,
   RegisterCredentials,
-  Asset,
-  InventoryItem,
   Order,
   OrderItem,
-  ChatMessage,
   ChatConversation,
   DashboardMetrics,
-  Report,
   Alert,
   FilterOptions,
   ComponentState,
@@ -29,12 +19,13 @@ export {
   ModalState,
   TableState,
   SearchState,
-  FileUpload,
   ThemeConfig,
   Logger,
   CacheEntry,
   ApiRequestConfig,
   BulkOperationResult,
+  BaseEntity,
+  ApiError,
 } from './base.types';
 
 // Auth Types

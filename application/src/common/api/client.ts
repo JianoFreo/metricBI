@@ -93,11 +93,22 @@ class ApiClient {
    */
   private static async refreshToken(): Promise<string | null> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {});
+      const refreshToken = await SecureStore.getItemAsync(STORAGE_KEYS.REFRESH_TOKEN);
+      if (!refreshToken) {
+        console.error('No refresh token available');
+        return null;
+      }
+
+      const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+        refreshToken,
+      });
       const { data } = response;
 
       if (data.data?.token) {
         await SecureStore.setItemAsync(STORAGE_KEYS.TOKEN, data.data.token);
+        if (data.data.refreshToken) {
+          await SecureStore.setItemAsync(STORAGE_KEYS.REFRESH_TOKEN, data.data.refreshToken);
+        }
         return data.data.token;
       }
     } catch (error) {

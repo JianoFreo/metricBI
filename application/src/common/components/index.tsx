@@ -25,9 +25,7 @@ export {
   BaseScreen,
   BaseScreenProps,
   BaseListComponent,
-  BaseListComponentProps,
   BaseFormComponent,
-  BaseFormComponentProps,
 } from './base.component';
 
 // Export Button component

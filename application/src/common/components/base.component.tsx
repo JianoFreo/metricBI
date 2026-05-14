@@ -68,6 +68,8 @@ export abstract class BaseComponent<P extends BaseComponentProps = BaseComponent
 export abstract class BaseStateComponent<
   P extends BaseStateComponentProps = BaseStateComponentProps
 > {
+  protected props: P;
+
   /**
    * Render loading state
    */
