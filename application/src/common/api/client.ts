@@ -1,10 +1,18 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
 /**
  * API Configuration
  */
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL =
+  Platform.OS === 'web'
+    ? process.env.EXPO_PUBLIC_API_URL_WEB ||
+      process.env.EXPO_PUBLIC_API_URL ||
+      'http://localhost:5000/api/v1'
+    : process.env.EXPO_PUBLIC_API_URL_NATIVE ||
+      process.env.EXPO_PUBLIC_API_URL ||
+      'http://localhost:5000/api/v1';
 
 /**
  * Storage Keys

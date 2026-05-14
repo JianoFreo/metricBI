@@ -8,7 +8,7 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 import { useAuth } from '@/common/context/auth.context';
 import { Button, Input, ErrorMessage } from '@/common/components';
 
@@ -16,7 +16,6 @@ import { Button, Input, ErrorMessage } from '@/common/components';
  * Login Screen
  */
 export default function LoginScreen() {
-  const router = useRouter();
   const { login, isLoading, error } = useAuth();
   const [companyId, setCompanyId] = useState('');
   const [email, setEmail] = useState('');
@@ -45,7 +44,7 @@ export default function LoginScreen() {
     >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps="always"
       >
         <View style={styles.headerContainer}>
           <Text style={styles.appTitle}>MetricBI</Text>
@@ -100,9 +99,11 @@ export default function LoginScreen() {
 
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Don't have an account? </Text>
-            <Pressable onPress={() => router.push('/(auth)/register')}>
+            <Link href="/(auth)/register" asChild>
+              <Pressable hitSlop={10} style={styles.signupLinkButton}>
               <Text style={styles.signupLink}>Sign up</Text>
-            </Pressable>
+              </Pressable>
+            </Link>
           </View>
         </View>
 
@@ -160,6 +161,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#4F46E5',
+  },
+  signupLinkButton: {
+    paddingVertical: 2,
+    paddingHorizontal: 2,
   },
   footer: {
     marginTop: 'auto',

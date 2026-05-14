@@ -8,7 +8,7 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 import { useAuth } from '@/common/context/auth.context';
 import { Button, Input, ErrorMessage } from '@/common/components';
 
@@ -16,7 +16,6 @@ import { Button, Input, ErrorMessage } from '@/common/components';
  * Register Screen
  */
 export default function RegisterScreen() {
-  const router = useRouter();
   const { register, isLoading, error } = useAuth();
   const [companyId, setCompanyId] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -64,7 +63,7 @@ export default function RegisterScreen() {
     >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps="always"
       >
         <View style={styles.headerContainer}>
           <Text style={styles.appTitle}>Create Account</Text>
@@ -147,9 +146,11 @@ export default function RegisterScreen() {
 
           <View style={styles.signinContainer}>
             <Text style={styles.signinText}>Already have an account? </Text>
-            <Pressable onPress={() => router.push('/(auth)/login')}>
+            <Link href="/(auth)/login" asChild>
+              <Pressable hitSlop={10} style={styles.signinLinkButton}>
               <Text style={styles.signinLink}>Sign in</Text>
-            </Pressable>
+              </Pressable>
+            </Link>
           </View>
         </View>
       </ScrollView>
@@ -203,5 +204,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#4F46E5',
+  },
+  signinLinkButton: {
+    paddingVertical: 2,
+    paddingHorizontal: 2,
   },
 });
