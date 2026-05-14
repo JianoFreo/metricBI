@@ -6,7 +6,9 @@ import {
   Platform,
   Text,
   ScrollView,
+  Pressable,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useAuth } from '@/common/context/auth.context';
 import { Button, Input, ErrorMessage } from '@/common/components';
 
@@ -14,6 +16,7 @@ import { Button, Input, ErrorMessage } from '@/common/components';
  * Login Screen
  */
 export default function LoginScreen() {
+  const router = useRouter();
   const { login, isLoading, error } = useAuth();
   const [companyId, setCompanyId] = useState('');
   const [email, setEmail] = useState('');
@@ -97,7 +100,9 @@ export default function LoginScreen() {
 
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Don't have an account? </Text>
-            <Text style={styles.signupLink}>Sign up</Text>
+            <Pressable onPress={() => router.push('/(auth)/register')}>
+              <Text style={styles.signupLink}>Sign up</Text>
+            </Pressable>
           </View>
         </View>
 

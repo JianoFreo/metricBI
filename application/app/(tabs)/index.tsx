@@ -1,10 +1,10 @@
-import { Image } from 'expo-image';
 import { Platform, StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Link } from 'expo-router';
 
 export default function HomeScreen() {
@@ -12,8 +12,10 @@ export default function HomeScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
-        <Image
-          source={require('../../assets/images/partial-react-logo.png')}
+        <IconSymbol
+          size={220}
+          color="#6B7280"
+          name="chevron.left.forwardslash.chevron.right"
           style={styles.reactLogo}
         />
       }>
@@ -89,10 +91,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+    bottom: -20,
+    right: 10,
     position: 'absolute',
   },
 });
