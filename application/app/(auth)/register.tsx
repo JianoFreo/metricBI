@@ -59,7 +59,10 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.headerContainer}>
           <Text style={styles.appTitle}>Create Account</Text>
           <Text style={styles.subtitle}>Join MetricBI today</Text>

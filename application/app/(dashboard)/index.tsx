@@ -15,7 +15,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { ServiceFactory } from '@/common/api';
+import { dashboardApi } from '@/common/api';
 import { KPICard } from '@/common/components/KPICard';
 import {
   SalesTrendChart,
@@ -48,8 +48,6 @@ export default function DashboardScreen() {
     lastUpdated: null,
   });
 
-  const dashboardService = ServiceFactory.getDashboardService();
-
   /**
    * Fetch dashboard data
    */
@@ -58,7 +56,7 @@ export default function DashboardScreen() {
       setState((s) => ({ ...s, isLoading: true, error: null }));
 
       // Fetch dashboard data
-      const dashboardResponse = await dashboardService.get<Dashboard>('/');
+      const dashboardResponse = await dashboardApi.getDashboard();
 
       if (!dashboardResponse.success || !dashboardResponse.data) {
         throw new Error('Failed to fetch dashboard');
@@ -67,9 +65,7 @@ export default function DashboardScreen() {
       const dashboard = dashboardResponse.data;
 
       // Fetch insights
-      const insightsResponse = await dashboardService.get<AIInsight[]>(
-        '/insights'
-      );
+      const insightsResponse = await dashboardApi.getInsights();
       const insights = insightsResponse.data || [];
 
       setState((s) => ({
