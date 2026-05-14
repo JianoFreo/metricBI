@@ -30,6 +30,13 @@ export {
   BaseFormComponentProps,
 } from './base.component';
 
+// Export Button component
+export { Button } from './Button';
+
+// Export standalone UI components
+export { ErrorMessage } from './ErrorMessage';
+export { Loading } from './Loading';
+
 // Card Component
 interface CardProps {
   children: React.ReactNode;
@@ -74,35 +81,6 @@ export const Input: React.FC<InputProps> = ({
       placeholderTextColor="#9CA3AF"
     />
     {error && <Text style={styles.errorText}>{error}</Text>}
-  </View>
-);
-
-// Loading Spinner
-interface LoadingProps {
-  size?: 'small' | 'large';
-  color?: string;
-}
-
-export const Loading: React.FC<LoadingProps> = ({ size = 'large', color = '#4F46E5' }) => (
-  <View style={styles.loadingContainer}>
-    <ActivityIndicator size={size} color={color} />
-  </View>
-);
-
-// Error Message
-interface ErrorMessageProps {
-  message: string;
-  onDismiss?: () => void;
-}
-
-export const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, onDismiss }) => (
-  <View style={styles.errorContainer}>
-    <Text style={styles.errorText}>{message}</Text>
-    {onDismiss && (
-      <Text style={styles.dismissText} onPress={onDismiss}>
-        Dismiss
-      </Text>
-    )}
   </View>
 );
 
@@ -257,31 +235,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 6,
     color: '#1F2937',
-  },
-  errorText: {
-    color: '#EF4444',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  errorContainer: {
-    backgroundColor: '#FEE2E2',
-    borderColor: '#FECACA',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    marginVertical: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  dismissText: {
-    color: '#DC2626',
-    fontWeight: '600',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   sectionHeader: {
     flexDirection: 'row',

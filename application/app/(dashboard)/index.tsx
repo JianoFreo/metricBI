@@ -422,7 +422,6 @@ const styles = StyleSheet.create({
   footer: {
     height: 20,
   },
-});
   badge: {
     backgroundColor: '#DBEAFE',
     paddingHorizontal: 12,

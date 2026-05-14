@@ -8,7 +8,8 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
-import { ErrorMessage, Loading } from './index';
+import { ErrorMessage } from './ErrorMessage';
+import { Loading } from './Loading';
 
 /**
  * Base Component Props
