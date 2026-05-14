@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useEffect, ReactNode } from 'react';
 import { useAuthStore } from '../store/auth.store';
-import type { User } from '../types';
+import type { User, LoginCredentials } from '../types';
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => Promise<void>;
   register: (data: any) => Promise<void>;
   isAuthenticated: boolean;
@@ -38,8 +38,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     token: authStore.token,
     isLoading: authStore.isLoading,
     error: authStore.error,
-    login: async (email: string, password: string) => {
-      await authStore.login({ email, password });
+    login: async (credentials: LoginCredentials) => {
+      await authStore.login(credentials);
     },
     logout: authStore.logout,
     register: authStore.register,

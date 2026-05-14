@@ -15,15 +15,17 @@ import { Button, Input, ErrorMessage } from '@/common/components';
  */
 export default function RegisterScreen() {
   const { register, isLoading, error } = useAuth();
-  const [name, setName] = useState('');
+  const [companyId, setCompanyId] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formError, setFormError] = useState('');
 
   const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) {
-      setFormError('All fields are required');
+    if (!companyId || !firstName || !lastName || !email || !password || !confirmPassword) {
+      setFormError('Company ID, name, email and password are required');
       return;
     }
 
@@ -38,7 +40,13 @@ export default function RegisterScreen() {
     }
 
     try {
-      await register({ name, email, password });
+      await register({
+        companyId,
+        firstName,
+        lastName,
+        email,
+        password,
+      });
     } catch (err: any) {
       setFormError(err.message);
     }
@@ -66,10 +74,29 @@ export default function RegisterScreen() {
 
         <View style={styles.formContainer}>
           <Input
-            label="Full Name"
-            placeholder="John Doe"
-            value={name}
-            onChangeText={setName}
+            label="Company ID"
+            placeholder="your-company-id"
+            value={companyId}
+            onChangeText={setCompanyId}
+            autoCapitalize="none"
+            editable={!isLoading}
+            containerStyle={styles.inputContainer}
+          />
+
+          <Input
+            label="First Name"
+            placeholder="John"
+            value={firstName}
+            onChangeText={setFirstName}
+            editable={!isLoading}
+            containerStyle={styles.inputContainer}
+          />
+
+          <Input
+            label="Last Name"
+            placeholder="Doe"
+            value={lastName}
+            onChangeText={setLastName}
             editable={!isLoading}
             containerStyle={styles.inputContainer}
           />

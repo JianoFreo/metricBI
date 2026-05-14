@@ -71,6 +71,7 @@ export interface AuthTokens {
  * Login credentials
  */
 export interface LoginCredentials {
+  companyId: string;
   email: string;
   password: string;
 }
@@ -79,9 +80,9 @@ export interface LoginCredentials {
  * Register credentials
  */
 export interface RegisterCredentials extends LoginCredentials {
-  username: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
+  role?: 'viewer' | 'analyst' | 'manager' | 'admin' | 'super_admin';
 }
 
 /**

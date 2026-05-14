@@ -15,18 +15,19 @@ import { Button, Input, ErrorMessage } from '@/common/components';
  */
 export default function LoginScreen() {
   const { login, isLoading, error } = useAuth();
+  const [companyId, setCompanyId] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      setFormError('Email and password are required');
+    if (!companyId || !email || !password) {
+      setFormError('Company ID, email and password are required');
       return;
     }
 
     try {
-      await login(email, password);
+      await login({ companyId, email, password });
     } catch (err: any) {
       setFormError(err.message);
     }
@@ -53,6 +54,16 @@ export default function LoginScreen() {
         )}
 
         <View style={styles.formContainer}>
+          <Input
+            label="Company ID"
+            placeholder="your-company-id"
+            value={companyId}
+            onChangeText={setCompanyId}
+            autoCapitalize="none"
+            editable={!isLoading}
+            containerStyle={styles.inputContainer}
+          />
+
           <Input
             label="Email"
             placeholder="you@example.com"

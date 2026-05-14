@@ -7,12 +7,12 @@ const envSchema = z.object({
   PORT: z.string().default("5000").transform(Number),
   
   // Database
-  MONGODB_URI: z.string().url(),
+  MONGODB_URI: z.string().min(1, "MONGODB_URI is required"),
   MONGODB_DB_NAME: z.string().default("metricbi"),
   
   // JWT
-  JWT_ACCESS_SECRET: z.string().min(32, "JWT_ACCESS_SECRET must be at least 32 characters"),
-  JWT_REFRESH_SECRET: z.string().min(32, "JWT_REFRESH_SECRET must be at least 32 characters"),
+  JWT_ACCESS_SECRET: z.string().min(1, "JWT_ACCESS_SECRET is required"),
+  JWT_REFRESH_SECRET: z.string().min(1, "JWT_REFRESH_SECRET is required"),
   JWT_ACCESS_EXPIRY: z.string().default("15m"),
   JWT_REFRESH_EXPIRY: z.string().default("7d"),
 
@@ -22,7 +22,7 @@ const envSchema = z.object({
   AUTH_COOKIE_DOMAIN: z.string().optional(),
   
   // Redis
-  REDIS_URL: z.string().url().optional(),
+  REDIS_URL: z.string().optional(),
   
   // External APIs
   OPENAI_API_KEY: z.string().optional(),

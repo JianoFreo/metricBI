@@ -29,10 +29,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
       const response = await authApi.login(credentials);
 
       if (response.success && response.data) {
-        const { user, token } = response.data;
+        const { user, token, tokens } = response.data as any;
 
         // Store credentials securely
-        await ApiClient.storeCredentials(token, user, user.tenantId);
+        await ApiClient.storeCredentials(token, user, user.tenantId, tokens?.refreshToken);
 
         set({ user, token, isLoading: false });
       } else {
@@ -62,10 +62,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
       const response = await authApi.register(data);
 
       if (response.success && response.data) {
-        const { user, token } = response.data;
+        const { user, token, tokens } = response.data as any;
 
         // Store credentials securely
-        await ApiClient.storeCredentials(token, user, user.tenantId);
+        await ApiClient.storeCredentials(token, user, user.tenantId, tokens?.refreshToken);
 
         set({ user, token, isLoading: false });
       } else {

@@ -65,8 +65,6 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/companies", companyRoutes);
 app.use("/api/v1/assets", assetRoutes);
 app.use("/api/v1/inventory", inventoryRoutes);
-app.use("/api/v1/analytics", analyticsRoutes);
-app.use("/api/v1/dashboard", dashboardRoutes);
 
 /**
  * API Documentation
@@ -80,8 +78,6 @@ app.get("/api/v1", (req: Request, res: Response) => {
       companies: "/api/v1/companies",
       assets: "/api/v1/assets",
       inventory: "/api/v1/inventory",
-      analytics: "/api/v1/analytics",
-      dashboard: "/api/v1/dashboard",
     },
   });
 });

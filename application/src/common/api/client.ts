@@ -11,6 +11,7 @@ const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/a
  */
 const STORAGE_KEYS = {
   TOKEN: 'auth_token',
+  REFRESH_TOKEN: 'auth_refresh_token',
   USER: 'auth_user',
   TENANT_ID: 'tenant_id',
 };
@@ -123,6 +124,7 @@ class ApiClient {
   private static async handleLogout(): Promise<void> {
     try {
       await SecureStore.deleteItemAsync(STORAGE_KEYS.TOKEN);
+      await SecureStore.deleteItemAsync(STORAGE_KEYS.REFRESH_TOKEN);
       await SecureStore.deleteItemAsync(STORAGE_KEYS.USER);
       await SecureStore.deleteItemAsync(STORAGE_KEYS.TENANT_ID);
       // Trigger logout event (handled by auth store)
@@ -134,9 +136,17 @@ class ApiClient {
   /**
    * Store credentials securely
    */
-  static async storeCredentials(token: string, user: any, tenantId: string): Promise<void> {
+  static async storeCredentials(
+    token: string,
+    user: any,
+    tenantId: string,
+    refreshToken?: string | null
+  ): Promise<void> {
     try {
       await SecureStore.setItemAsync(STORAGE_KEYS.TOKEN, token);
+      if (refreshToken) {
+        await SecureStore.setItemAsync(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+      }
       await SecureStore.setItemAsync(STORAGE_KEYS.USER, JSON.stringify(user));
       await SecureStore.setItemAsync(STORAGE_KEYS.TENANT_ID, tenantId);
     } catch (error) {
