@@ -11,6 +11,7 @@ import authRoutes from "@features/auth/routes/auth.routes.js";
 import companyRoutes from "@features/tenant/routes/company.routes.js";
 import assetRoutes from "@features/assets/routes/asset.routes.js";
 import inventoryRoutes from "@features/inventory/routes/inventory.routes.js";
+import analyticsRoutes from "@features/analytics/routes/analytics.routes.js";
 
 const app: Application = express();
 
@@ -62,6 +63,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/companies", companyRoutes);
 app.use("/api/v1/assets", assetRoutes);
 app.use("/api/v1/inventory", inventoryRoutes);
+app.use("/api/v1/analytics", analyticsRoutes);
 
 /**
  * API Documentation
@@ -75,6 +77,7 @@ app.get("/api/v1", (req: Request, res: Response) => {
       companies: "/api/v1/companies",
       assets: "/api/v1/assets",
       inventory: "/api/v1/inventory",
+      analytics: "/api/v1/analytics",
     },
   });
 });
