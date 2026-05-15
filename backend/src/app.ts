@@ -18,6 +18,11 @@ import inventoryRoutes from "@features/inventory/routes/inventory.routes";
 const app: Application = express();
 
 /**
+ * Trust Proxy (for Render and other reverse proxies)
+ */
+app.set("trust proxy", 1);
+
+/**
  * Security Middleware
  */
 app.use(helmet());
